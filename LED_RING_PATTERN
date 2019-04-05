@@ -1,0 +1,59 @@
+#include <Adafruit_NeoPixel.h>
+
+#define PIN 2 
+#define NUM_LEDS 24
+#define LIGHTLENGTH 3
+#define SPEED 25
+
+// Parameter 1 = number of pixels in strip
+// Parameter 2 = pin number (most are valid)
+// Parameter 3 = pixel type:
+//   NEO_GRB  Pixels are wired for GRB bitstream (most NeoPixel products)
+//   NEO_RGB  Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB);
+
+uint32_t color = strip.Color(0,0, 255); // Change RGB color value here
+
+// These are the pixels in order of animation-- 24 pixels in total:
+//int play[] = {
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
+
+void setup() {
+  strip.begin();
+  strip.show();            // Initialize all pixels to 'off'
+  strip.setBrightness(10); // 40/255 brightness (about 15%)
+}
+
+void loop() {
+  for(int j=0; j<2; j++) {      //number of times pattern repeats
+    for(int i=0; i<24; i++) {       //i controls LED on
+      strip.setPixelColor(i, color);             // Draw 'head' pixel
+      strip.setPixelColor(i - LIGHTLENGTH, 0); // Erase 'tail'
+      if(i>=0&&i<LIGHTLENGTH)
+       {
+          strip.setPixelColor(23 - (LIGHTLENGTH - 1 - i), 0);
+       }
+      strip.show();
+      delay(SPEED);
+     }
+   }
+   
+   for(int i=0; i<LIGHTLENGTH; i++) {
+    strip.setPixelColor(23 - (LIGHTLENGTH - 1 - i), 0);
+    strip.show();
+    delay(SPEED);
+   }
+   
+   delay(100);
+   for(int i=0; i<24; i++) {        //flash
+     strip.setPixelColor(i, color);     //sets all ON
+  }
+  strip.show();
+  delay(SPEED*8);
+  
+  for(int i=0; i<24; i++) {
+    strip.setPixelColor(i, 0);       //sets all OFF
+  }
+  strip.show();
+  delay(SPEED*3);
+}
